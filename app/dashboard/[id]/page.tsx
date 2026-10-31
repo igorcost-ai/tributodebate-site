@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { useState, useEffect, Suspense } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 
 function ReviewContent() {
   const params = useParams();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("blog");
   const [artigo, setArtigo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -14,8 +15,16 @@ function ReviewContent() {
   const [publicando, setPublicando] = useState(false);
 
   useEffect(() => {
+    // 1. VERIFICAÇÃO DE SEGURANÇA (Se não tiver token, volta pro login)
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/");
+      return;
+    }
+
     if (!params.id) return;
 
+    // 2. BUSCA O ARTIGO
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/artigos/${params.id}`)
       .then((res) => {
         if (!res.ok) throw new Error(`Erro ${res.status}: Artigo não encontrado.`);
@@ -30,7 +39,7 @@ function ReviewContent() {
         setErro(err.message);
         setLoading(false);
       });
-  }, [params.id]);
+  }, [params.id, router]);
 
   const handleAprovar = async () => {
     if (!artigo) return;
@@ -55,9 +64,9 @@ function ReviewContent() {
     }
   };
 
-  if (loading) return <div className="p-8 text-center text-gray-500">Buscando artigo...</div>;
-  if (erro) return <div className="p-8 text-center text-red-500 font-bold">{erro}</div>;
-  if (!artigo) return <div className="p-8 text-center text-red-500">Artigo não encontrado.</div>;
+  if (loading) return <div className="p-8 text-center text-slate-500">Buscando artigo...</div>;
+  if (erro) return <div className="p-8 text-center text-red-600 font-bold">{erro}</div>;
+  if (!artigo) return <div className="p-8 text-center text-red-600">Artigo não encontrado.</div>;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -93,10 +102,9 @@ function ReviewContent() {
         </div>
       </header>
 
-      {/* O SEGREDO ESTÁ AQUI: O grid dividido em 3 colunas */}
       <main className="max-w-7xl mx-auto p-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        {/* Coluna Esquerda (2/3 da tela): Texto Principal */}
+        {/* Coluna Esquerda: Texto Principal */}
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white rounded-lg shadow-sm p-8 border border-gray-200">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">{artigo.titulo}</h1>
@@ -123,8 +131,7 @@ function ReviewContent() {
               </button>
             </div>
 
-            {/* Renderização do Markdown */}
-            <div className="prose prose-green max-w-none text-gray-800">
+            <div className="prose prose-lg prose-slate max-w-none text-slate-700">
               {activeTab === "blog" ? (
                 <ReactMarkdown>{artigo.conteudo_blog}</ReactMarkdown>
               ) : (
@@ -134,7 +141,7 @@ function ReviewContent() {
           </div>
         </div>
 
-        {/* Coluna Direita (1/3 da tela): Metadados de SEO e GEO */}
+        {/* Coluna Direita: Metadados de SEO e GEO */}
         <div className="space-y-6">
           <div className="bg-white rounded-lg shadow-sm p-6 border-t-4 border-blue-500 border border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
@@ -184,7 +191,7 @@ function ReviewContent() {
 
 export default function ReviewPage() {
   return (
-    <Suspense fallback={<div className="p-8 text-center">Carregando painel...</div>}>
+    <Suspense fallback={<div className="p-8 text-center text-slate-500">Carregando painel...</div>}>
       <ReviewContent />
     </Suspense>
   );

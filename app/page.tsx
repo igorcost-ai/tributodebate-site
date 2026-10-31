@@ -6,16 +6,29 @@ import { useRouter } from "next/navigation";
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [senha, setSenha] = useState("");
+  const [erro, setErro] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulação de login por enquanto
-    if (email && password) {
-      // Redireciona para o painel (que vamos criar em seguida)
-      router.push("/dashboard");
-    } else {
-      alert("Preencha e-mail e senha");
+    setErro("");
+    
+    try {
+      // Chama a rota de login do backend
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/login?email=${encodeURIComponent(email)}&senha=${encodeURIComponent(senha)}`, {
+        method: "POST",
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        localStorage.setItem("token", data.access_token); // Salva o crachá (token)
+        router.push("/dashboard"); // Entra no painel
+      } else {
+        setErro("E-mail ou senha incorretos.");
+      }
+    } catch (err) {
+      console.error(err);
+      setErro("Erro de conexão com o servidor.");
     }
   };
 
@@ -23,44 +36,38 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
       <div className="w-full max-w-md space-y-8 rounded-xl bg-white p-10 shadow-lg">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900">AgroPolicy</h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Plataforma Editorial de Políticas Públicas
-          </p>
+          <h1 className="text-3xl font-bold text-gray-900">TributoDebate</h1>
+          <p className="mt-2 text-sm text-gray-600">Acesso restrito ao Painel</p>
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleLogin}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                E-mail
-              </label>
+              <label className="block text-sm font-medium text-gray-700">E-mail</label>
               <input
-                id="email"
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500"
-                placeholder="seu@email.com"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-green-500 focus:outline-none focus:ring-green-500"
+                placeholder="admin@tributodebate.com.br"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Senha
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Senha</label>
               <input
-                id="password"
                 type="password"
                 required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500"
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-green-500 focus:outline-none focus:ring-green-500"
                 placeholder="••••••••"
               />
             </div>
           </div>
+
+          {erro && <p className="text-red-500 text-sm text-center">{erro}</p>}
 
           <button
             type="submit"

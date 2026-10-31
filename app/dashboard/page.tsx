@@ -4,23 +4,21 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
-type Artigo = {
-  id: string;
-  titulo: string;
-  status: string;
-  created_at: string;
-  linha_editorial_id: string;
-};
-
 export default function DashboardPage() {
   const router = useRouter();
-  const [artigos, setArtigos] = useState<Artigo[]>([]);
+  const [artigos, setArtigos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTenant, setActiveTenant] = useState("tributario"); // Portal padrão
+  const [activeTenant, setActiveTenant] = useState("tributario");
 
   useEffect(() => {
-    setLoading(true);
-    // Agora a chamada inclui o ?tenant= para filtrar no backend
+    // 1. Verifica se o usuário está logado
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/"); // Se não tiver token, expulsa para o login
+      return;
+    }
+
+    // 2. Busca os artigos
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/artigos?tenant=${activeTenant}`)
       .then((res) => res.json())
       .then((data) => {
@@ -31,7 +29,12 @@ export default function DashboardPage() {
         console.error("Erro ao buscar artigos:", err);
         setLoading(false);
       });
-  }, [activeTenant]); // Recarrega sempre que mudar de portal
+  }, [activeTenant, router]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Apaga o crachá
+    router.push("/"); // Volta para o login
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -42,27 +45,22 @@ export default function DashboardPage() {
             <p className="text-sm text-gray-500">Gerencie as análises e publicações</p>
           </div>
           
-          {/* BOTÕES PARA TROCAR DE PORTAL */}
           <div className="flex items-center bg-gray-200 rounded-lg p-1">
             <button
               onClick={() => setActiveTenant("agro")}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                activeTenant === "agro" ? "bg-white shadow text-gray-900" : "text-gray-500 hover:text-gray-900"
-              }`}
+              className={`px-4 py-2 rounded-md text-sm font-medium ${activeTenant === "agro" ? "bg-white shadow text-gray-900" : "text-gray-500"}`}
             >
               AgroDebate
             </button>
             <button
               onClick={() => setActiveTenant("tributario")}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                activeTenant === "tributario" ? "bg-white shadow text-gray-900" : "text-gray-500 hover:text-gray-900"
-              }`}
+              className={`px-4 py-2 rounded-md text-sm font-medium ${activeTenant === "tributario" ? "bg-white shadow text-gray-900" : "text-gray-500"}`}
             >
               TributoDebate
             </button>
           </div>
 
-          <button onClick={() => router.push("/")} className="text-sm text-red-600 hover:underline">
+          <button onClick={handleLogout} className="text-sm text-red-600 hover:underline">
             Sair
           </button>
         </header>
@@ -91,14 +89,14 @@ export default function DashboardPage() {
         </div>
 
         <div className="rounded-lg bg-white shadow-sm border border-gray-200">
-          <div className="border-b px-6 py-4 flex justify-between items-center">
+          <div className="border-b px-6 py-4">
             <h2 className="text-lg font-semibold text-gray-900">Artigos Recentes ({activeTenant})</h2>
           </div>
           
           {loading ? (
             <div className="p-8 text-center text-gray-500">Carregando artigos...</div>
           ) : artigos.length === 0 ? (
-            <div className="p-8 text-center text-gray-500">Nenhum artigo gerado ainda para este portal.</div>
+            <div className="p-8 text-center text-gray-500">Nenhum artigo gerado ainda.</div>
           ) : (
             <ul className="divide-y divide-gray-200">
               {artigos.map((artigo) => (
@@ -108,9 +106,7 @@ export default function DashboardPage() {
                     <div className="mt-1 flex items-center space-x-4 text-sm text-gray-500">
                       <span>{new Date(artigo.created_at).toLocaleDateString('pt-BR')}</span>
                       <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        artigo.status === "publicado" 
-                          ? "bg-green-100 text-green-800" 
-                          : "bg-yellow-100 text-yellow-800"
+                        artigo.status === "publicado" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"
                       }`}>
                         {artigo.status.toUpperCase()}
                       </span>
