@@ -34,19 +34,15 @@ function ArticleContent() {
   if (erro) return <div className="p-8 text-center text-red-600">{erro}</div>;
   if (!artigo) return <div className="p-8 text-center text-red-600">Artigo não encontrado.</div>;
 
+  const fallbackImage = "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80";
+
   return (
     <div className="min-h-screen relative">
-      
       {/* HEADER */}
       <header className="bg-[#0A192F] text-white py-4 px-8 shadow-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <Link href="/blog" className="flex items-center space-x-3 group">
-            {/* LOGO AJUSTADA: Sem o círculo branco, apenas a imagem com sombra */}
-            <img 
-              src="/logo-icon.png" 
-              alt="TributoDebate" 
-              className="h-12 w-auto object-contain drop-shadow-md rounded-sm" 
-            />
+            <img src="/logo-icon.png" alt="TributoDebate" className="h-12 w-auto object-contain drop-shadow-md rounded-sm" />
             <div>
               <span className="text-2xl font-serif font-bold tracking-tight block leading-none">
                 <span className="text-white">Tributo</span>
@@ -81,7 +77,7 @@ function ArticleContent() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           
-          <article className="lg:col-span-8 bg-white/95 backdrop-blur-md p-8 md:p-10 rounded-xl shadow-xl border border-slate-200">
+          <article className="lg:col-span-8 bg-white/95 backdrop-blur-sm p-8 md:p-10 rounded-xl shadow-xl border border-slate-200">
             
             <div className="text-xs font-bold text-[#D6A84F] uppercase tracking-wider mb-3">
               {artigo.categoria || "Tributação"}
@@ -107,7 +103,7 @@ function ArticleContent() {
 
             <div className="w-full h-80 bg-slate-200 rounded-lg mb-8 overflow-hidden">
               <img 
-                src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
+                src={artigo.imagem_url || fallbackImage} 
                 alt="Imagem de capa" 
                 className="w-full h-full object-cover"
               />
@@ -127,7 +123,7 @@ function ArticleContent() {
           </article>
 
           <aside className="lg:col-span-4 space-y-8">
-            <div className="bg-white/95 backdrop-blur-md p-6 rounded-xl shadow-lg border border-slate-200">
+            <div className="bg-white/95 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-slate-200">
               <h3 className="font-serif font-bold text-[#0A192F] text-lg mb-4 border-b pb-2">Últimos artigos</h3>
               <div className="space-y-4">
                 {[1, 2, 3].map((item) => (
@@ -146,7 +142,7 @@ function ArticleContent() {
               </div>
             </div>
 
-            <div className="bg-white/95 backdrop-blur-md p-6 rounded-xl shadow-lg border border-slate-200">
+            <div className="bg-white/95 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-slate-200">
               <h3 className="font-serif font-bold text-[#0A192F] text-lg mb-4 border-b pb-2">Categorias</h3>
               <div className="flex flex-wrap gap-2">
                 {artigo.categoria ? (

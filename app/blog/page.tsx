@@ -23,19 +23,16 @@ export default function BlogIndex() {
   const artigoDestaque = artigos.length > 0 ? artigos[0] : null;
   const outrosArtigos = artigos.length > 1 ? artigos.slice(1) : [];
 
+  // Imagem de fallback caso a notícia não tenha imagem no RSS
+  const fallbackImage = "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80";
+
   return (
     <div className="min-h-screen relative">
-      
       {/* HEADER */}
       <header className="bg-[#0A192F] text-white py-4 px-8 shadow-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-           <Link href="/blog" className="flex items-center space-x-3 group">
-            {/* LOGO AJUSTADA: Sem o círculo branco, apenas a imagem com sombra */}
-            <img 
-              src="/logo-icon.png" 
-              alt="TributoDebate" 
-              className="h-12 w-auto object-contain drop-shadow-md rounded-sm" 
-            />
+          <Link href="/blog" className="flex items-center space-x-3 group">
+            <img src="/logo-icon.png" alt="TributoDebate" className="h-12 w-auto object-contain drop-shadow-md rounded-sm" />
             <div>
               <span className="text-2xl font-serif font-bold tracking-tight block leading-none">
                 <span className="text-white">Tributo</span>
@@ -66,15 +63,15 @@ export default function BlogIndex() {
             {loading ? (
               <div className="text-center text-slate-500 py-20">Carregando artigos...</div>
             ) : artigos.length === 0 ? (
-              <div className="text-center text-slate-500 py-20 bg-white/90 backdrop-blur-sm rounded-xl border border-slate-200 shadow-lg">Nenhum artigo publicado ainda.</div>
+              <div className="text-center text-slate-500 py-20 bg-white/95 rounded-xl border border-slate-200 shadow-lg">Nenhum artigo publicado ainda.</div>
             ) : (
               <>
                 {artigoDestaque && (
-                  <article className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl border border-slate-200 overflow-hidden group">
+                  <article className="bg-white/95 backdrop-blur-sm rounded-xl shadow-xl border border-slate-200 overflow-hidden group">
                     <Link href={`/blog/${artigoDestaque.slug}`}>
                       <div className="w-full h-80 bg-slate-200 overflow-hidden">
                         <img 
-                          src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
+                          src={artigoDestaque.imagem_url || fallbackImage} 
                           alt={artigoDestaque.titulo} 
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
@@ -108,10 +105,10 @@ export default function BlogIndex() {
 
                 <div className="space-y-6">
                   {outrosArtigos.map((artigo) => (
-                    <article key={artigo.id} className="bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-slate-200 group flex flex-col md:flex-row gap-6">
+                    <article key={artigo.id} className="bg-white/95 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-slate-200 group flex flex-col md:flex-row gap-6">
                       <div className="w-full md:w-1/3 h-48 md:h-auto bg-slate-200 rounded-lg overflow-hidden flex-shrink-0">
                         <img 
-                          src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                          src={artigo.imagem_url || fallbackImage} 
                           alt={artigo.titulo} 
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
@@ -140,7 +137,7 @@ export default function BlogIndex() {
           </div>
 
           <aside className="lg:col-span-4 space-y-8">
-            <div className="bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-slate-200">
+            <div className="bg-white/95 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-slate-200">
               <h3 className="font-serif font-bold text-[#0A192F] text-lg mb-4 border-b pb-2">Últimos artigos</h3>
               <div className="space-y-4">
                 {artigos.slice(0, 3).map((artigo, index) => (
@@ -161,7 +158,7 @@ export default function BlogIndex() {
               </div>
             </div>
 
-            <div className="bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-slate-200">
+            <div className="bg-white/95 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-slate-200">
               <h3 className="font-serif font-bold text-[#0A192F] text-lg mb-4 border-b pb-2">Categorias</h3>
               <div className="flex flex-wrap gap-2">
                 {["Tributação", "Legislação", "Economia", "Políticas públicas", "Jurisprudência"].map((cat) => (
