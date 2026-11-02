@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react"; // Adicionado o useEffect
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
@@ -8,6 +8,14 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
+
+  // NOVO: Verifica se o usuário já está logado ao abrir a página
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      router.push("/dashboard"); // Se tem crachá, entra direto
+    }
+  }, [router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
