@@ -50,8 +50,13 @@ export default function BlogIndex() {
             <Link href="/blog" className="hover:text-[#D6A84F] transition-colors">Categorias</Link>
             <Link href="/perfil" className="hover:text-[#D6A84F] transition-colors">Sobre</Link>
           </nav>
-          <div className="hidden md:block">
+          
+          <div className="hidden md:flex items-center space-x-4">
             <input type="text" placeholder="Buscar no site..." className="bg-[#112240] text-sm text-white px-4 py-2 rounded-md border border-slate-700 focus:outline-none focus:border-[#D6A84F]" />
+            {/* LINK NOVO AQUI */}
+            <Link href="/login" className="text-sm font-medium text-slate-300 hover:text-[#D6A84F] transition-colors whitespace-nowrap">
+              Área Restrita
+            </Link>
           </div>
         </div>
       </header>

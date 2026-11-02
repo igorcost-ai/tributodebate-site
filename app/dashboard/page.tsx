@@ -9,17 +9,15 @@ export default function DashboardPage() {
   const [artigos, setArtigos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTenant, setActiveTenant] = useState("tributario");
-  const [gerandoPautas, setGerandoPautas] = useState(false); // NOVO ESTADO
+  const [gerandoPautas, setGerandoPautas] = useState(false);
 
   useEffect(() => {
-    // 1. Verifica se o usuário está logado
     const token = localStorage.getItem("token");
     if (!token) {
-      router.push("/"); // Se não tiver token, expulsa para o login
+      router.push("/login"); // Ajustado para /login
       return;
     }
 
-    // 2. Busca os artigos
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/artigos?tenant=${activeTenant}`)
       .then((res) => res.json())
       .then((data) => {
@@ -33,11 +31,10 @@ export default function DashboardPage() {
   }, [activeTenant, router]);
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Apaga o crachá
-    router.push("/"); // Volta para o login
+    localStorage.removeItem("token");
+    router.push("/login"); // Ajustado para /login
   };
 
-  // NOVA FUNÇÃO: Gerar pautas via IA
   const handleGerarPautas = async () => {
     if (!confirm(`Deseja gerar 100 novas pautas via IA para o tenant ${activeTenant}? Isso pode levar alguns minutos.`)) return;
     
@@ -85,7 +82,6 @@ export default function DashboardPage() {
             </button>
           </div>
 
-          {/* BOTÕES À DIREITA */}
           <div className="flex items-center space-x-4">
             <button 
               onClick={handleGerarPautas}
