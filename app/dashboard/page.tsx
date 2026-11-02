@@ -9,6 +9,7 @@ export default function DashboardPage() {
   const [artigos, setArtigos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTenant, setActiveTenant] = useState("tributario");
+  const [gerandoPautas, setGerandoPautas] = useState(false); // NOVO ESTADO
 
   useEffect(() => {
     // 1. Verifica se o usuário está logado
@@ -36,6 +37,30 @@ export default function DashboardPage() {
     router.push("/"); // Volta para o login
   };
 
+  // NOVA FUNÇÃO: Gerar pautas via IA
+  const handleGerarPautas = async () => {
+    if (!confirm(`Deseja gerar 100 novas pautas via IA para o tenant ${activeTenant}? Isso pode levar alguns minutos.`)) return;
+    
+    setGerandoPautas(true);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/pipeline/pautas/gerar-lote/${activeTenant}?quantidade=100`, {
+        method: "POST",
+      });
+      
+      if (!res.ok) {
+        const erro = await res.json();
+        throw new Error(erro.detail || "Erro ao gerar pautas");
+      }
+      
+      const data = await res.json();
+      alert(`✅ Sucesso! ${data.quantidade} pautas foram adicionadas ao banco.`);
+    } catch (error: any) {
+      alert(`❌ Erro: ${error.message}`);
+    } finally {
+      setGerandoPautas(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="mx-auto max-w-6xl">
@@ -60,9 +85,24 @@ export default function DashboardPage() {
             </button>
           </div>
 
-          <button onClick={handleLogout} className="text-sm text-red-600 hover:underline">
-            Sair
-          </button>
+          {/* BOTÕES À DIREITA */}
+          <div className="flex items-center space-x-4">
+            <button 
+              onClick={handleGerarPautas}
+              disabled={gerandoPautas}
+              className={`font-bold py-2 px-4 rounded-md text-sm shadow transition-colors ${
+                gerandoPautas 
+                  ? "bg-gray-400 text-white cursor-not-allowed" 
+                  : "bg-yellow-600 hover:bg-yellow-700 text-white"
+              }`}
+            >
+              {gerandoPautas ? "⏳ Gerando..." : "⚡ Gerar 100 Pautas"}
+            </button>
+
+            <button onClick={handleLogout} className="text-sm text-red-600 hover:underline">
+              Sair
+            </button>
+          </div>
         </header>
 
         <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-4">
