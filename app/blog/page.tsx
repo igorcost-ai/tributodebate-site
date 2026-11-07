@@ -23,7 +23,6 @@ export default function BlogIndex() {
   const artigoDestaque = artigos.length > 0 ? artigos[0] : null;
   const outrosArtigos = artigos.length > 1 ? artigos.slice(1) : [];
 
-  // Imagem de fallback caso a notícia não tenha imagem no RSS
   const fallbackImage = "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80";
 
   return (
@@ -31,7 +30,7 @@ export default function BlogIndex() {
       {/* HEADER */}
       <header className="bg-[#0A192F] text-white py-4 px-8 shadow-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <Link href="/blog" className="flex items-center space-x-3 group">
+          <Link href="/" className="flex items-center space-x-3 group">
             <img src="/logo-icon.png" alt="TributoDebate" className="h-12 w-auto object-contain drop-shadow-md rounded-sm" />
             <div>
               <span className="text-2xl font-serif font-bold tracking-tight block leading-none">
@@ -45,15 +44,14 @@ export default function BlogIndex() {
           </Link>
           
           <nav className="hidden md:flex space-x-6 text-sm font-medium text-slate-300">
-            <Link href="/blog" className="text-[#D6A84F] transition-colors">Início</Link>
-            <Link href="/blog" className="hover:text-[#D6A84F] transition-colors">Artigos</Link>
-            <Link href="/blog" className="hover:text-[#D6A84F] transition-colors">Categorias</Link>
+            <Link href="/" className="text-[#D6A84F] transition-colors">Início</Link>
+            <Link href="/" className="hover:text-[#D6A84F] transition-colors">Artigos</Link>
+            <Link href="/" className="hover:text-[#D6A84F] transition-colors">Categorias</Link>
             <Link href="/perfil" className="hover:text-[#D6A84F] transition-colors">Sobre</Link>
           </nav>
           
           <div className="hidden md:flex items-center space-x-4">
             <input type="text" placeholder="Buscar no site..." className="bg-[#112240] text-sm text-white px-4 py-2 rounded-md border border-slate-700 focus:outline-none focus:border-[#D6A84F]" />
-            {/* LINK NOVO AQUI */}
             <Link href="/login" className="text-sm font-medium text-slate-300 hover:text-[#D6A84F] transition-colors whitespace-nowrap">
               Área Restrita
             </Link>

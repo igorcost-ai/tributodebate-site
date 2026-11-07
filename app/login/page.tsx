@@ -10,7 +10,6 @@ export default function LoginPage() {
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
 
-  // Se o usuário já estiver logado, manda direto para o dashboard
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -89,7 +88,7 @@ export default function LoginPage() {
           <Link href="#" className="text-green-600 hover:underline">
             Esqueci a senha
           </Link>
-          <Link href="/blog" className="text-green-600 hover:underline">
+          <Link href="/" className="text-green-600 hover:underline">
             Voltar para o Blog
           </Link>
         </div>
